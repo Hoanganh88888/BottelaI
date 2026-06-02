@@ -1,4 +1,4 @@
-const axios = require('axios');
+import axios from 'axios';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -14,13 +14,11 @@ export default async function handler(req, res) {
   const chatId = message.chat.id;
   const userText = message.text;
 
-  // Skip /start command
   if (userText === '/start') {
     return res.status(200).send('OK');
   }
 
   try {
-    // Gọi DeepSeek API
     const response = await axios.post('https://api.deepseek.com/v1/chat/completions', {
       model: 'deepseek-chat',
       messages: [
@@ -40,7 +38,6 @@ export default async function handler(req, res) {
 
     const botReply = response.data.choices[0].message.content;
 
-    // Gửi reply về Telegram
     await axios.post(`https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
       chat_id: chatId,
       text: botReply
